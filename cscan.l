@@ -28,42 +28,47 @@ str \'([^'\n]|\'\')+\'
 ^"#".*      ret_print("PREPROCESSOR");
 
     /* -=keywords=- */
-auto        ret_print("KEYWORD");
-break       ret_print("KEYWORD");
-case        ret_print("KEYWORD");
-char        ret_print("KEYWORD");
-const       ret_print("KEYWORD");
-continue    ret_print("KEYWORD");
-default     ret_print("KEYWORD");
-do          ret_print("KEYWORD");
-double      ret_print("KEYWORD");
-else        ret_print("KEYWORD");
-enum        ret_print("KEYWORD");
-extern      ret_print("KEYWORD");
-float       ret_print("KEYWORD");
-for         ret_print("KEYWORD");
-goto        ret_print("KEYWORD");
-if          ret_print("KEYWORD");
-int         ret_print("KEYWORD");
-long        ret_print("KEYWORD");
-register    ret_print("KEYWORD");
-return      ret_print("KEYWORD");
-short       ret_print("KEYWORD");
-signed      ret_print("KEYWORD");
-sizeof      ret_print("KEYWORD");
-static      ret_print("KEYWORD");
-struct      ret_print("KEYWORD");
-switch      ret_print("KEYWORD");
-typedef     ret_print("KEYWORD");
-union       ret_print("KEYWORD");
-unsigned    ret_print("KEYWORD");
-void        ret_print("KEYWORD");
-volatile    ret_print("KEYWORD");
-while       ret_print("KEYWORD");
+auto        ret_print("AUTO");
+break       ret_print("BREAK");
+case        ret_print("CASE");
+char        ret_print("CHAR");
+const       ret_print("CONST");
+continue    ret_print("CONTINUE");
+default     ret_print("DEFAULT");
+do          ret_print("DO");
+double      ret_print("DOUBLE");
+else        ret_print("ELSE");
+enum        ret_print("ENUM");
+extern      ret_print("EXTERN");
+float       ret_print("FLOAT");
+for         ret_print("FOR");
+goto        ret_print("GOTO");
+if          ret_print("IF");
+int         ret_print("INT");
+long        ret_print("LONG");
+register    ret_print("REGISTER");
+return      ret_print("RETURN");
+short       ret_print("SHORT");
+signed      ret_print("SIGNED");
+sizeof      ret_print("SIZEOF");
+static      ret_print("STATIC");
+struct      ret_print("STRUCT");
+switch      ret_print("SWITCH");
+typedef     ret_print("TYPEDEF");
+union       ret_print("UNION");
+unsigned    ret_print("UNSIGNED");
+void        ret_print("VOID");
+volatile    ret_print("VOLATILE");
+while       ret_print("WHILE");
 
     /* -=operators=- */
-"=="        ret_print("OPERATOR");
-"++"        ret_print("OPERATOR");
+"=="        ret_print("EQUAL_OPERATOR");
+"++"        ret_print("INCREMENT_OPERATOR");
+"--"        ret_print("DECREMENT_OPERATOR");
+"*"         ret_print("*");
+"+"         ret_print("+");
+"-"         ret_print("-");
+"/"         ret_print("/");
 
 
 %%
