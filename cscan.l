@@ -1,4 +1,3 @@
-
 %option noyywrap
 %{
     #include <stdio.h>
@@ -7,6 +6,8 @@
     void ret_print(char *token_type);
     void yyerror();
 %}
+
+%x M_Comments
 
 white_space [ \t]*
 digit [0-9]
@@ -24,7 +25,11 @@ str \'([^'\n]|\'\')+\'
 %%
 
     /* multi-line comments ??? */
-"//".*      ret_print("COMMENT");
+"/*"                { BEGIN(M_Comments); }
+<M_Comments>"*/"    { BEGIN(INITIAL); }
+<M_Comments>.       { }
+<M_Comments>\n      { line_number++; }
+"//".*      ret_print("COMMENT");   /* Single line commets */
 ^"#".*      ret_print("PREPROCESSOR");
 
     /* -=keywords=- */
@@ -64,12 +69,13 @@ while       ret_print("WHILE");
     /* -=operators=- */
 "=="        ret_print("EQUAL_OPERATOR");
 "++"        ret_print("INCREMENT_OPERATOR");
-"--"        ret_print("DECREMENT_OPERATOR");
+"--"        ret_print("DECREMENT_OPERATOR");    /* FIXME: it takes stuff like strings in printf() as decrement operators */
 "*"         ret_print("*");
 "+"         ret_print("+");
 "-"         ret_print("-");
 "/"         ret_print("/");
 
+\n          { line_number++; }
 
 %%
 
@@ -86,6 +92,8 @@ int main(int argc, char *argv[]) {
     }
     yylex();
     
+    printf("------------");
+    printf("\nTotal lines: %d\n", line_number-1);
     fclose(yyin);
     fclose(yyout);
     return 0;
