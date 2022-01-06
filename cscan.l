@@ -90,6 +90,7 @@ while       ret_print("WHILE");
 "+"         ret_print("ADDITION_OPERATOR");
 "-"         ret_print("SUBTRACTION_OPERATOR");
 "/"         ret_print("DIVISION_OPERATOR");
+"%"         ret_print("MODULUS_OPERATOR");
         /* -=Logical Operators=- */
 "&&"        ret_print("LOGICAL_AND_OPERATOR");
 "||"        ret_print("LOGICAL_OR_OPERATOR");
