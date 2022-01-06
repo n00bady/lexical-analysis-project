@@ -14,11 +14,8 @@ digit [0-9]
 alpha [A-Za-z_]
 alpha_num ({alpha}|{digit})
 hex 0x[0-9A-F]
-hex_int ${hex}{hex}*
 id {alpha}{alpha_num}*
-un_int {digit}+
 exp e[+-]?{digit}+
-i {un_int}
 real ({i}\.{i}?|{i}?\.{i}){exp}?
 char '([^\r^\n^']|\\0)'
 str \"(\\.|[^\\"])*\"
