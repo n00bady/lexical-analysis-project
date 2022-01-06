@@ -77,13 +77,13 @@ while       ret_print("WHILE");
 
     /* -=constants=- */
 [-+]?{digit}+   ret_print("Decimal");
-{Hex}+          ret_print("Hexadecimal");
+{hex}+          ret_print("Hexadecimal");
 {real}          ret_print("Real");
 
     /* -=empty lines and new lines=- */
 [ \t\n]     { line_number++; }
     /* -=anything else=- */
-.           { yyerror("Not defined!") }
+.           { yyerror("Not defined!"); }
 
 %%
 
