@@ -13,7 +13,7 @@ white_space [ \t]*
 digit [0-9]
 alpha [A-Za-z_]
 alpha_num ({alpha}|{digit})
-hex [0-9A-F]
+hex 0x[0-9A-F]
 hex_int ${hex}{hex}*
 id {alpha}{alpha_num}*
 un_int {digit}+
@@ -24,7 +24,7 @@ str \'([^'\n]|\'\')+\'
 
 %%
 
-    /* multi-line comments ??? */
+    /* multi-line comments */
 "/*"                { BEGIN(M_Comments); }
 <M_Comments>"*/"    { BEGIN(INITIAL); }
 <M_Comments>.       { }
@@ -75,7 +75,15 @@ while       ret_print("WHILE");
 "-"         ret_print("-");
 "/"         ret_print("/");
 
-\n          { line_number++; }
+    /* -=constants=- */
+[-+]?{digit}+   ret_print("Decimal");
+{Hex}+          ret_print("Hexadecimal");
+{real}          ret_print("Real");
+
+    /* -=empty lines and new lines=- */
+[ \t\n]     { line_number++; }
+    /* -=anything else=- */
+.           { yyerror("Not defined!") }
 
 %%
 
