@@ -20,16 +20,16 @@ un_int {digit}+
 exp e[+-]?{digit}+
 i {un_int}
 real ({i}\.{i}?|{i}?\.{i}){exp}?
-str \'([^'\n]|\'\')+\'
+char '([^\r^\n^']|\\0)'
+str \"(\\.|[^\\"])*\"
 
 %%
 
-    /* multi-line comments */
-"/*"                { BEGIN(M_Comments); }
+"/*"                { BEGIN(M_Comments); } /* multi-line comments */
 <M_Comments>"*/"    { BEGIN(INITIAL); }
 <M_Comments>.       { }
 <M_Comments>\n      { line_number++; }
-"//".*      ret_print("COMMENT");   /* Single line commets */
+"//".*      ret_print("COMMENT");   /* Single line comments */
 ^"#".*      ret_print("PREPROCESSOR");
 
     /* -=keywords=- */
@@ -66,23 +66,54 @@ void        ret_print("VOID");
 volatile    ret_print("VOLATILE");
 while       ret_print("WHILE");
 
-    /* -=operators=- */
+    /* -=Constants=- */
+[-+]?{digit}+   ret_print("DECIMAL");
+{hex}+          ret_print("HEXADECIMAL");
+{real}          ret_print("REAL");
+{char}          ret_print("CHARACTER");
+{str}           ret_print("STRING");
+    /* -=Identifier=- */
+{id}            ret_print("IDENTIFIER");
+
+    /* -=Operators=- */
+        /* -=Relational Operators=- */
 "=="        ret_print("EQUAL_OPERATOR");
+"!="        ret_print("NOT_EQUAL_OPERATOR");
+">"         ret_print("GREATER_OPERATOR");
+"<"         ret_print("LESSER_OPERATOR");
+">="        ret_print("GREATER_EQUAL_OPERATOR");
+"<="        ret_print("LESSER_EQUAL_OPERATOR");
+        /* -=Arithmetic Operators=- */
 "++"        ret_print("INCREMENT_OPERATOR");
-"--"        ret_print("DECREMENT_OPERATOR");    /* FIXME: it takes stuff like strings in printf() as decrement operators */
-"*"         ret_print("*");
-"+"         ret_print("+");
-"-"         ret_print("-");
-"/"         ret_print("/");
+"--"        ret_print("DECREMENT_OPERATOR");
+"*"         ret_print("MULTIPLICATION_OPERATOR");
+"+"         ret_print("ADDITION_OPERATOR");
+"-"         ret_print("SUBTRACTION_OPERATOR");
+"/"         ret_print("DIVISION_OPERATOR");
+        /* -=Logical Operators=- */
+"&&"        ret_print("LOGICAL_AND_OPERATOR");
+"||"        ret_print("LOGICAL_OR_OPERATOR");
+"!"         ret_print("LOGICAL_NOT_OPERATOR");
+        /* -=Bitwise Operators=- */
+"&"         ret_print("BITWISE_AND_OPERATOR");
+"|"         ret_print("BITWISE_OR_OPERATOR");
 
-    /* -=constants=- */
-[-+]?{digit}+   ret_print("Decimal");
-{hex}+          ret_print("Hexadecimal");
-{real}          ret_print("Real");
+    /* -=Punctuation=- */
+"("         ret_print("(");
+")"         ret_print(")");
+","         ret_print(",");
+"."         ret_print(".");
+";"         ret_print(";");
+"["         ret_print("[");
+"]"         ret_print("]");
+"{"         ret_print("{");
+"}"         ret_print("}");
+"="         ret_print("=");
 
-    /* -=empty lines and new lines=- */
-[ \t\n]     { line_number++; }
-    /* -=anything else=- */
+    /* -=Empty lines and new lines=- */
+{white_space}   { /* ignore white space */ }
+\n              { line_number++; }
+    /* -=Anything else=- */
 .           { yyerror("Not defined!"); }
 
 %%
