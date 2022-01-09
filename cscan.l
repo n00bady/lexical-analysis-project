@@ -15,18 +15,20 @@ alpha [A-Za-z_]
 alpha_num ({alpha}|{digit})
 hex 0x[0-9A-F]
 id {alpha}{alpha_num}*
+un_int {digit}+
 exp e[+-]?{digit}+
+i   {un_int}
 real ({i}\.{i}?|{i}?\.{i}){exp}?
 char '([^\r^\n^']|\\0)'
 str \"(\\.|[^\\"])*\"
 
 %%
 
-"/*"                { BEGIN(M_Comments); } /* multi-line comments */
+"/*"                { BEGIN(M_Comments); } /* eat multi-line comments */
 <M_Comments>"*/"    { BEGIN(INITIAL); }
 <M_Comments>.       { }
 <M_Comments>\n      { line_number++; }
-"//".*      ret_print("COMMENT");   /* Single line comments */
+"//".*      { /* eat single line comment */}
 ^"#".*      ret_print("PREPROCESSOR");
 
     /* -=keywords=- */
@@ -77,9 +79,9 @@ while       ret_print("WHILE");
 "=="        ret_print("EQUAL_OPERATOR");
 "!="        ret_print("NOT_EQUAL_OPERATOR");
 ">"         ret_print("GREATER_OPERATOR");
-"<"         ret_print("LESSER_OPERATOR");
+"<"         ret_print("LESS_OPERATOR");
 ">="        ret_print("GREATER_EQUAL_OPERATOR");
-"<="        ret_print("LESSER_EQUAL_OPERATOR");
+"<="        ret_print("LESS_EQUAL_OPERATOR");
         /* -=Arithmetic Operators=- */
 "++"        ret_print("INCREMENT_OPERATOR");
 "--"        ret_print("DECREMENT_OPERATOR");
@@ -93,8 +95,30 @@ while       ret_print("WHILE");
 "||"        ret_print("LOGICAL_OR_OPERATOR");
 "!"         ret_print("LOGICAL_NOT_OPERATOR");
         /* -=Bitwise Operators=- */
-"&"         ret_print("BITWISE_AND_OPERATOR");
-"|"         ret_print("BITWISE_OR_OPERATOR");
+"&"         ret_print("BINARY_AND_OPERATOR");
+"|"         ret_print("BINARY_OR_OPERATOR");
+"<<"        ret_print("BINARY_LEFT_SHIFT_OPERATOR");
+">>"        ret_print("BINARY_RIGHT_SHIFT_OPERATOR");
+"~"         ret_print("BINARY_ONES_COMPLEMENT_OPERATOR");
+"^"         ret_print("BINARY_XOR_OPERATOR");
+
+        /* -=Assignment Operators=- */
+"="         ret_print("SIMPLE_ASSIGNMENT_OPERATOR");
+"+="        ret_print("ADD_AND_ASSIGNMENT_OPERATOR");
+"-="        ret_print("SUBTRACT_AND_ASSIGNMENT_OPERATOR");
+"*="        ret_print("MULTIPLY_AND_ASSIGNMENT_OPERATOR");
+"/="        ret_print("DIVIDE_AND_ASSIGNMENT_OPERATOR");
+"%="        ret_print("MODULUS_AND_ASSIGNMENT_OPERATOR");
+"<<="       ret_print("LEFT_SHIFT_AND_ASSIGNMENT_OPERATOR");
+">>="       ret_print("RIGHT_SHIFT_AND_ASSIGNMENT_OPERATOR");
+"&="        ret_print("BITWISE_AND_AND_ASSIGNMENT_OPERATOR");
+"^="        ret_print("BITWISE_XOR_AND_ASSIGNMENT_OPERATOR");
+"|="        ret_print("BITWISE_OR_AND_ASSIGNMENT_OPERATOR");
+
+        /* -=Misc. Operators=- */
+\&{id}      ret_print("RETURN_ADDRESS");
+\*{id}      ret_print("POINTER");
+"?"         ret_print("CONDITIONAL_EXPRESSION"); /* not sure how to handle this */
 
     /* -=Punctuation=- */
 "("         ret_print("(");
@@ -106,7 +130,6 @@ while       ret_print("WHILE");
 "]"         ret_print("]");
 "{"         ret_print("{");
 "}"         ret_print("}");
-"="         ret_print("=");
 
     /* -=Empty lines and new lines=- */
 {white_space}   { /* ignore white space */ }
