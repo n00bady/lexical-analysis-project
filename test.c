@@ -9,6 +9,11 @@ int findMostCommoninPos (FILE *fp, int pos);
 const char * array2string (int array[]);
 int linescount (FILE *fp);
 
+/* Multi-line comment
+ * just for
+ * testing :) */
+
+
 int main (int argc, char *argv[]) {
     FILE *fp = fopen(argv[1], "r");
     int pos, gamma[bits], epsilon[bits];
