@@ -2,8 +2,9 @@
 %{
     #include <stdio.h>
 
+    #include "parser.tab.h"
+
     int line_number = 1;
-    void ret_print(char *token_type);
     void yyerror();
 %}
 
@@ -29,107 +30,114 @@ str \"(\\.|[^\\"])*\"
 <M_Comments>.       { }
 <M_Comments>\n      { line_number++; }
 "//".*      { /* eat single line comment */}
-^"#".*      ret_print("PREPROCESSOR");
+^"#".*       
 
     /* -=keywords=- */
-auto        ret_print("AUTO");
-break       ret_print("BREAK");
-case        ret_print("CASE");
-char        ret_print("CHAR");
-const       ret_print("CONST");
-continue    ret_print("CONTINUE");
-default     ret_print("DEFAULT");
-do          ret_print("DO");
-double      ret_print("DOUBLE");
-else        ret_print("ELSE");
-enum        ret_print("ENUM");
-extern      ret_print("EXTERN");
-float       ret_print("FLOAT");
-for         ret_print("FOR");
-goto        ret_print("GOTO");
-if          ret_print("IF");
-int         ret_print("INT");
-long        ret_print("LONG");
-register    ret_print("REGISTER");
-return      ret_print("RETURN");
-short       ret_print("SHORT");
-signed      ret_print("SIGNED");
-sizeof      ret_print("SIZEOF");
-static      ret_print("STATIC");
-struct      ret_print("STRUCT");
-switch      ret_print("SWITCH");
-typedef     ret_print("TYPEDEF");
-union       ret_print("UNION");
-unsigned    ret_print("UNSIGNED");
-void        ret_print("VOID");
-volatile    ret_print("VOLATILE");
-while       ret_print("WHILE");
+auto        { return(AUTO); }
+_Bool       { return(BOOL); }
+break       { return(BREAK); }
+case        { return(CASE); }
+char        { return(CHAR); }
+const       { return(CONST); }
+continue    { return(CONTINUE); }
+_Complex    { return(COMPLEX); }
+default     { return(DEFAULT); }
+do          { return(DO); }
+double      { return(DOUBLE); }
+else        { return(ELSE); }
+enum        { return(ENUM); }
+extern      { return(EXTERN); }
+float       { return(FLOAT); }
+for         { return(FOR); }
+goto        { return(GOTO); }
+if          { return(IF); }
+_Imaginary  { return(IMAGINARY); }
+inline      { return(INLINE); }
+int         { return(INT); }
+long        { return(LONG); }
+register    { return(REGISTER); }
+restrict    { return(RESTRICT); }
+return      { return(RETURN); }
+short       { return(SHORT); }
+signed      { return(SIGNED); }
+sizeof      { return(SIZEOF); }
+static      { return(STATIC); }
+struct      { return(STRUCT); }
+switch      { return(SWITCH); }
+typedef     { return(TYPEDEF); }
+union       { return(UNION); }
+unsigned    { return(UNSIGNED); }
+void        { return(VOID); }
+volatile    { return(VOLATILE); }
+while       { return(WHILE); }
 
     /* -=Constants=- */
-[-+]?{digit}+   ret_print("DECIMAL");
-{hex}+          ret_print("HEXADECIMAL");
-{real}          ret_print("REAL");
-{char}          ret_print("CHARACTER");
-{str}           ret_print("STRING");
+[-+]?{digit}+   { return(CONSTANT); }
+{hex}+          { return(CONSTANT); }
+{real}          { return(CONSTANT); }
+{char}          { return(CONSTANT); }
+{str}           { return(STRING_LITERAL); }
     /* -=Identifier=- */
-{id}            ret_print("IDENTIFIER");
+{id}            { return(IDENTIFIER); }
 
     /* -=Operators=- */
         /* -=Relational Operators=- */
-"=="        ret_print("EQUAL_OPERATOR");
-"!="        ret_print("NOT_EQUAL_OPERATOR");
-">"         ret_print("GREATER_OPERATOR");
-"<"         ret_print("LESS_OPERATOR");
-">="        ret_print("GREATER_EQUAL_OPERATOR");
-"<="        ret_print("LESS_EQUAL_OPERATOR");
+"=="        { return(EQUAL_OPERATOR); }
+"!="        { return(NOT_EQUAL_OPERATOR); }
+">"         { return('>'); }
+"<"         { return('<'); }
+">="        { return(GREATER_EQUAL_OPERATOR); }
+"<="        { return(LESS_EQUAL_OPERATOR); }
         /* -=Arithmetic Operators=- */
-"++"        ret_print("INCREMENT_OPERATOR");
-"--"        ret_print("DECREMENT_OPERATOR");
-"*"         ret_print("MULTIPLICATION_OPERATOR");
-"+"         ret_print("ADDITION_OPERATOR");
-"-"         ret_print("SUBTRACTION_OPERATOR");
-"/"         ret_print("DIVISION_OPERATOR");
-"%"         ret_print("MODULUS_OPERATOR");
+"++"        { return(INCREMENT_OPERATOR); }
+"--"        { return(DECREMENT_OPERATOR); }
+"*"         { return('*'); }
+"+"         { return('+'); }
+"-"         { return('-'); }
+"/"         { return('/'); }
+"%"         { return('%'); }
         /* -=Logical Operators=- */
-"&&"        ret_print("LOGICAL_AND_OPERATOR");
-"||"        ret_print("LOGICAL_OR_OPERATOR");
-"!"         ret_print("LOGICAL_NOT_OPERATOR");
+"&&"        { return(AND_OPERATOR); }
+"||"        { return(OR_OPERATOR); }
+"!"         { return('!'); }
         /* -=Bitwise Operators=- */
-"&"         ret_print("BINARY_AND_OPERATOR");
-"|"         ret_print("BINARY_OR_OPERATOR");
-"<<"        ret_print("BINARY_LEFT_SHIFT_OPERATOR");
-">>"        ret_print("BINARY_RIGHT_SHIFT_OPERATOR");
-"~"         ret_print("BINARY_ONES_COMPLEMENT_OPERATOR");
-"^"         ret_print("BINARY_XOR_OPERATOR");
+"&"         { return('&'); }
+"|"         { return('|'); }
+"<<"        { return(BINARY_LEFT_SHIFT_OPERATOR); }
+">>"        { return(BINARY_RIGHT_SHIFT_OPERATOR); }
+"~"         { return('~'); }
+"^"         { return('^'); }
 
         /* -=Assignment Operators=- */
-"="         ret_print("SIMPLE_ASSIGNMENT_OPERATOR");
-"+="        ret_print("ADD_AND_ASSIGNMENT_OPERATOR");
-"-="        ret_print("SUBTRACT_AND_ASSIGNMENT_OPERATOR");
-"*="        ret_print("MULTIPLY_AND_ASSIGNMENT_OPERATOR");
-"/="        ret_print("DIVIDE_AND_ASSIGNMENT_OPERATOR");
-"%="        ret_print("MODULUS_AND_ASSIGNMENT_OPERATOR");
-"<<="       ret_print("LEFT_SHIFT_AND_ASSIGNMENT_OPERATOR");
-">>="       ret_print("RIGHT_SHIFT_AND_ASSIGNMENT_OPERATOR");
-"&="        ret_print("BITWISE_AND_AND_ASSIGNMENT_OPERATOR");
-"^="        ret_print("BITWISE_XOR_AND_ASSIGNMENT_OPERATOR");
-"|="        ret_print("BITWISE_OR_AND_ASSIGNMENT_OPERATOR");
+"="         { return('='); }
+"+="        { return(ADD_ASSIGN); }
+"-="        { return(SUB_ASSIGN); }
+"*="        { return(MUL_ASSIGN); }
+"/="        { return(DIV_ASSIGN); }
+"%="        { return(MOD_ASSIGN); }
+"<<="       { return(LEFT_ASSIGN); }
+">>="       { return(RIGHT_ASSIGN); }
+"&="        { return(AND_ASSIGN); }
+"^="        { return(XOR_ASSIGN); }
+"|="        { return(OR_ASSIGN); }
 
         /* -=Misc. Operators=- */
-\&{id}      ret_print("RETURN_ADDRESS");
-\*{id}      ret_print("POINTER");
-"?"         ret_print("CONDITIONAL_EXPRESSION"); /* not sure how to handle this */
+"->"        { return(POINTER_OPERATOR); }
+    /* \&{id}        not needed that's what bison is for */
+    /* \*{id}        not needed that's what bison is for */
+"?"         { return('?'); }/* not sure how to handle this (bison) */
+"..."       { return(ELLIPSIS); }
 
     /* -=Punctuation=- */
-"("         ret_print("(");
-")"         ret_print(")");
-","         ret_print(",");
-"."         ret_print(".");
-";"         ret_print(";");
-"["         ret_print("[");
-"]"         ret_print("]");
-"{"         ret_print("{");
-"}"         ret_print("}");
+"("          
+")"          
+","          
+"."          
+";"          
+"["          
+"]"          
+"{"          
+"}"          
 
     /* -=Empty lines and new lines=- */
 {white_space}   { /* ignore white space */ }
@@ -138,7 +146,7 @@ while       ret_print("WHILE");
 .           { yyerror("Not defined!"); }
 
 %%
-
+/*
 int main(int argc, char *argv[]) {
     yyin = fopen(argv[1], "r");
     yyout = fopen("output.txt", "w");
@@ -167,4 +175,4 @@ void ret_print(char *token_type) {
 void yyerror(char *message) {
     fprintf(yyout, "Error: \"%s\" in line %d. Token = %s\n", message, line_number, yytext);
     exit(1);
-}
+}   */
