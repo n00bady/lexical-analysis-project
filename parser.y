@@ -1,8 +1,10 @@
 %{
 /* C declarations */
 #include <stdio.h>
+#include <stdlib.h>
 
 extern int line_number;
+extern FILE *yyin;
 void yyerror(char *s);
 
 %}
@@ -482,9 +484,15 @@ declaration_list
 %%
 
 /* C code */
-int main() {
+int main(int arc, char *argv[]) {
+    yyin = fopen(argv[1], "r");
+    if (yyin == NULL) {
+        perror("Unable to open file!");
+        exit(1);
+    }
     yyparse();
 
+    fclose(yyin);
     return 0;
 }
 
