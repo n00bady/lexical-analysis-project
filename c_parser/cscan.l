@@ -5,7 +5,8 @@
     #include "parser.tab.h"
 
     int line_number = 1;
-    void yyerror();
+    extern int yyparse();
+    extern void yyerror();
 %}
 
 %x M_Comments
