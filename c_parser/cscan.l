@@ -35,13 +35,11 @@ str \"(\\.|[^\\"])*\"
 
     /* -=keywords=- */
 auto        { return(AUTO); }
-_Bool       { return(BOOL); }
 break       { return(BREAK); }
 case        { return(CASE); }
 char        { return(CHAR); }
 const       { return(CONST); }
 continue    { return(CONTINUE); }
-_Complex    { return(COMPLEX); }
 default     { return(DEFAULT); }
 do          { return(DO); }
 double      { return(DOUBLE); }
@@ -52,8 +50,7 @@ float       { return(FLOAT); }
 for         { return(FOR); }
 goto        { return(GOTO); }
 if          { return(IF); }
-_Imaginary  { return(IMAGINARY); }
-inline      { return(INLINE); }
+inline      { /* return(INLINE); */ }
 int         { return(INT); }
 long        { return(LONG); }
 register    { return(REGISTER); }
@@ -73,11 +70,11 @@ volatile    { return(VOLATILE); }
 while       { return(WHILE); }
 
     /* -=Constants=- */
-[-+]?{digit}+   { return(CONSTANT); }
-{hex}+          { return(CONSTANT); }
-{real}          { return(CONSTANT); }
-{char}          { return(CONSTANT); }
-{str}           { return(STRING_LITERAL); }
+[-+]?{digit}+   { return(INTEGER); }
+{hex}+          { return(HEX); }
+{real}          { return(REAL); }
+{char}          { return(CHARACTER); }
+{str}           { return(STRING); }
     /* -=Identifier=- */
 {id}            { return(IDENTIFIER); }
 
@@ -85,13 +82,13 @@ while       { return(WHILE); }
         /* -=Relational Operators=- */
 "=="        { return(EQUAL_OPERATOR); }
 "!="        { return(NOT_EQUAL_OPERATOR); }
-">"         { return('>'); }
-"<"         { return('<'); }
+">"         { return(GREATER_OPERATOR); }
+"<"         { return(LESS_OPERATOR); }
 ">="        { return(GREATER_EQUAL_OPERATOR); }
 "<="        { return(LESS_EQUAL_OPERATOR); }
         /* -=Arithmetic Operators=- */
-"++"        { return(INCREMENT_OPERATOR); }
-"--"        { return(DECREMENT_OPERATOR); }
+"++"        { /* return(INCREMENT_OPERATOR); */ }
+"--"        { /* return(DECREMENT_OPERATOR); */ }
 "*"         { return('*'); }
 "+"         { return('+'); }
 "-"         { return('-'); }
@@ -111,34 +108,34 @@ while       { return(WHILE); }
 
         /* -=Assignment Operators=- */
 "="         { return('='); }
-"+="        { return(ADD_ASSIGN); }
-"-="        { return(SUB_ASSIGN); }
-"*="        { return(MUL_ASSIGN); }
-"/="        { return(DIV_ASSIGN); }
-"%="        { return(MOD_ASSIGN); }
-"<<="       { return(LEFT_ASSIGN); }
-">>="       { return(RIGHT_ASSIGN); }
-"&="        { return(AND_ASSIGN); }
-"^="        { return(XOR_ASSIGN); }
-"|="        { return(OR_ASSIGN); }
+"+="        { /* return(ADD_ASSIGN); */ }
+"-="        { /* return(SUB_ASSIGN); */ }
+"*="        { /* return(MUL_ASSIGN); */ }
+"/="        { /* return(DIV_ASSIGN); */ }
+"%="        { /* return(MOD_ASSIGN); */ }
+"<<="       { /* return(LEFT_ASSIGN); */ }
+">>="       { /* return(RIGHT_ASSIGN); */ }
+"&="        { /* return(AND_ASSIGN); */ }
+"^="        { /* return(XOR_ASSIGN); */ }
+"|="        { /* return(OR_ASSIGN); */ }
 
         /* -=Misc. Operators=- */
-"->"        { return(POINTER_OPERATOR); }
+"->"        { /* return(POINTER_OPERATOR); */ }
     /* \&{id}        not needed that's what bison is for */
     /* \*{id}        not needed that's what bison is for */
 "?"         { return('?'); }/* not sure how to handle this (bison) */
-"..."       { return(ELLIPSIS); }
+"..."       { /* return(ELLIPSIS); */ }
 
     /* -=Punctuation=- */
-"("          
-")"          
-","          
-"."          
-";"          
-"["          
-"]"          
-"{"          
-"}"          
+"("         { return(O_PARENTHESIS); }
+")"         { return(C_PARENTHESIS); }
+","         { return(COMMA); }
+"."         
+";"         { return(SEMICOLON); } 
+"["         { return(O_SQ_BRACKET); }
+"]"         { return(C_SQ_BRACKET); }
+"{"         { return(O_CURLY_BRACES); }
+"}"         { return(C_CURLY_BRACES); }
 
     /* -=Empty lines and new lines=- */
 {white_space}   { /* ignore white space */ }
