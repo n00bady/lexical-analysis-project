@@ -1,4 +1,0 @@
-FOR PARSING : bison -d $2 parser.y 
-LEX: flex $1 lexer.l
-BIND:  gcc -o parser lex.yy.c parser.c sds.c
-COMPILE: g++ test.cpp  
