@@ -2,9 +2,7 @@
 /* C declarations */
 #include <stdio.h>
 #include <stdlib.h>
-
-extern int line_number;
-extern int yylex();
+extern int line_number; extern int yylex();
 extern FILE *yyin;
 extern char *yytext;
 void yyerror(char *s);
@@ -16,20 +14,21 @@ void yyerror(char *s);
 %token AUTO BREAK CASE CONST CONTINUE DEFAULT DO ELSE ENUM EXTERN FOR GOTO IF
 %token REGISTER RESTRICT RETURN SIGNED SIZEOF STATIC STRUCT SWITCH TYPEDEF
 %token UNION UNSIGNED VOLATILE WHILE
-
 %token INTEGER HEX REAL CHARACTER
 %token CHAR DOUBLE FLOAT INT LONG SHORT VOID
 
-%token SEMICOLON COMMA O_SQ_BRACKET C_SQ_BRACKET O_CURLY_BRACES C_CURLY_BRACES 
-%token O_PARENTHESIS C_PARENTHESIS
+%token SEMICOLON COMMA O_CURLY_BRACES C_CURLY_BRACES 
+%left O_PARENTHESIS C_PARENTHESIS O_SQ_BRACKET C_SQ_BRACKET
 
-%token EQUAL_OPERATOR NOT_EQUAL_OPERATOR
-%token GREATER_EQUAL_OPERATOR LESS_EQUAL_OPERATOR
-%token GREATER_OPERATOR LESS_OPERATOR
-%token AND_OPERATOR OR_OPERATOR
+%left NOT_EQUAL_OPERATOR EQUAL_OPERATOR 
+%left GREATER_EQUAL_OPERATOR LESS_EQUAL_OPERATOR
+%left GREATER_OPERATOR LESS_OPERATOR
+%left AND_OPERATOR OR_OPERATOR
 %token BINARY_LEFT_SHIFT_OPERATOR BINARY_RIGHT_SHIFT_OPERATOR
+%right INC_OPERATOR DEC_OPERATOR
 
 %token STRING IDENTIFIER
+
 
 %%
 /* da rulez */
@@ -40,7 +39,7 @@ start
      ;
 
 declaration
-    : type_list assignment SEMICOLON
+    : type_list assignment SEMICOLON { printf("Found a variable declaration!\n"); }
     | assignment SEMICOLON
     | function_call SEMICOLON
     | array SEMICOLON
@@ -67,6 +66,8 @@ assignment
     | IDENTIFIER '-' assignment
     | IDENTIFIER '*' assignment
     | IDENTIFIER '/' assignment
+    | IDENTIFIER INC_OPERATOR
+    | IDENTIFIER DEC_OPERATOR
     | '\'' assignment '\''
     | O_PARENTHESIS assignment C_PARENTHESIS
     | '-' IDENTIFIER
@@ -83,7 +84,7 @@ array
     ;
 
 function_call
-    : IDENTIFIER O_PARENTHESIS parameter_list C_PARENTHESIS SEMICOLON { printf("Found a function call!"); }
+    : IDENTIFIER O_PARENTHESIS parameter_list C_PARENTHESIS SEMICOLON { printf("Found a function call!\n"); }
     ;
 
 function
@@ -101,10 +102,11 @@ statement_list
 
 statement
     : declaration
-    | for_statement
+    | for_statement { printf("Found a FOR statement!\n"); }
     | if_statement
     | while_statement
     | return_statement
+    | function_call
     ;
 
 parameter_list
@@ -121,14 +123,11 @@ param
     ;
 
 for_statement
-    : FOR O_PARENTHESIS expression SEMICOLON expression SEMICOLON expression C_PARENTHESIS statement
-    | FOR O_PARENTHESIS expression SEMICOLON expression SEMICOLON expression C_PARENTHESIS body
-    | FOR O_PARENTHESIS expression C_PARENTHESIS statement
-    | FOR O_PARENTHESIS expression C_PARENTHESIS body
+    : FOR O_PARENTHESIS assignment SEMICOLON expression SEMICOLON expression C_PARENTHESIS body
     ;
 
 if_statement
-    : IF O_PARENTHESIS expression C_PARENTHESIS statement
+    : IF O_PARENTHESIS expression C_PARENTHESIS body
     ;
 
 while_statement
@@ -137,7 +136,7 @@ while_statement
 
 expression
     : expression GREATER_OPERATOR expression
-    | expression LESS_OPERATOR expression
+    | expression LESS_OPERATOR expression { printf("Found LESS than expression!\n"); }
     | expression GREATER_EQUAL_OPERATOR expression
     | expression LESS_EQUAL_OPERATOR expression
     | expression EQUAL_OPERATOR expression
@@ -150,7 +149,7 @@ expression
     ;
 
 return_statement
-    : RETURN expression SEMICOLON
+    : RETURN expression SEMICOLON { printf("Returing from a function!\n"); }
     |
     ;
 

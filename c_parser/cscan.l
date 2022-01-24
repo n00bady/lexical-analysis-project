@@ -87,8 +87,8 @@ while       { return(WHILE); }
 ">="        { return(GREATER_EQUAL_OPERATOR); }
 "<="        { return(LESS_EQUAL_OPERATOR); }
         /* -=Arithmetic Operators=- */
-"++"        { /* return(INCREMENT_OPERATOR); */ }
-"--"        { /* return(DECREMENT_OPERATOR); */ }
+"++"        { return(INC_OPERATOR); }
+"--"        { return(DEC_OPERATOR); }
 "*"         { return('*'); }
 "+"         { return('+'); }
 "-"         { return('-'); }
