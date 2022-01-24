@@ -141,7 +141,6 @@ expression
     | expression LESS_EQUAL_OPERATOR expression
     | expression EQUAL_OPERATOR expression
     | expression NOT_EQUAL_OPERATOR expression
-    | parameter_list
     | assignment
     | array
     | function_call
